@@ -1,0 +1,34 @@
+{
+    "name": "beowulfenator/yii2-json-editor",
+    "description": "Yii2 wrapper for jdorn/json-editor",
+    "keywords": [
+        "yii2",
+        "json",
+        "json-editor"
+    ],
+    "type": "yii2-extension",
+    "license": "BSD-2-Clause",
+    "homepage": "https://github.com/beowulfenator/yii2-json-editor",
+    "authors": [
+        {
+            "name": "Konstantin Sirotkin",
+            "email": "beowulfenator@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0.0",
+        "bower-asset/json-editor": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "beowulfenator\\JsonEditor\\": "src"
+        }
+    },
+    "extra": {
+        "asset-installer-paths": {
+            "npm-asset-library": "vendor/npm",
+            "bower-asset-library": "vendor/bower"
+        }
+    }
+}
