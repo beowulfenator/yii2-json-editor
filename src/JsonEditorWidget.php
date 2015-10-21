@@ -124,7 +124,12 @@ class JsonEditorWidget extends BaseWidget{
         $view->registerJs(
 <<<JS
 var {$widgetId} = new JSONEditor(document.getElementById('{$containerId}'), {$clientOptions});
-{$widgetId}.setValue(JSON.parse(document.getElementById('{$inputId}').value));
+try {
+    var initialValue = JSON.parse(document.getElementById('{$inputId}').value);
+    {$widgetId}.setValue(initialValue);
+} catch (e) {
+    console.log('Could not parse initial value for {$widgetId}');
+}
 {$widgetId}.on('change', function() {
     document.getElementById('{$inputId}').value = JSON.stringify({$widgetId}.getValue());
 });
