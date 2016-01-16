@@ -132,9 +132,9 @@ var {$widgetId} = new JSONEditor(document.getElementById('{$containerId}'), {$cl
     } catch (e) {
         console.warn('Could not parse initial value for {$widgetId}, error: '+e);
     }
-});
-{$widgetId}.on('change', function() {
-    document.getElementById('{$inputId}').value = JSON.stringify({$widgetId}.getValue());
+    {$widgetId}.on('change', function() {
+        document.getElementById('{$inputId}').value = JSON.stringify({$widgetId}.getValue());
+    });
 });
 JS
 , $view::POS_READY);
