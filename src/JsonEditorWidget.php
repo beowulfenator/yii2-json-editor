@@ -53,6 +53,19 @@ class JsonEditorWidget extends BaseWidget{
     public $clientOptions = [];
 
     /**
+     * If true, ALL widgets of this type will be configured to use the Selectize library.
+     * @var boolean
+     */
+    public $enableSelectize = false;
+
+    /**
+     * If true, and $enableSelectize is true, Selectize library will be registered and loaded.
+     * Set to false if Selectize is loaded elsewhere.
+     * @var boolean
+     */
+    public $loadSelectize = true;
+
+    /**
      * If true, a hidden input will be rendered to contain the results
      * @var boolean
      */
@@ -88,6 +101,10 @@ class JsonEditorWidget extends BaseWidget{
 
         parent::init();
         JsonEditorAsset::register($this->getView());
+
+        if ($this->enableSelectize && $this->loadSelectize) {
+            SelectizeAsset::register($this->getView());
+        }
     }
 
     public function run()
@@ -120,24 +137,30 @@ class JsonEditorWidget extends BaseWidget{
         $inputId = $this->inputId;
         $containerId = $this->containerOptions['id'];
 
+        if ($this->enableSelectize) {
+            $view->registerJs("JSONEditor.plugins.selectize.enable = true;\n", $view::POS_READY, 'JSONEditorEnableSelectize');
+        }
+
+        $widgetJs = "var {$widgetId} = new JSONEditor(document.getElementById('{$containerId}'), {$clientOptions});\n";
+
+        $readyFunction = '';
+        try {
+            $parsedValue = Json::decode($this->value);
+        } catch (\Exception $e) {
+            $parsedValue = null;
+        }
+
+        if (!empty($parsedValue)) {
+            $encodedValue = Json::encode($parsedValue);
+            $readyFunction .= "try { {$widgetId}.setValue({$encodedValue}); } catch (e) { console.warn('Could not parse initial value for {$widgetId}, error: '+e); }\n";
+        }
+
+        $readyFunction .= "{$widgetId}.on('change', function() { document.getElementById('{$inputId}').value = JSON.stringify({$widgetId}.getValue()); });\n";
+
+        $widgetJs .= "{$widgetId}.on('ready', function() {\n{$readyFunction}\n});";
+
         //register js code
-        $view->registerJs(
-<<<JS
-var {$widgetId} = new JSONEditor(document.getElementById('{$containerId}'), {$clientOptions});
-{$widgetId}.on('ready', function() {
-    try {
-        var initialValue = JSON.parse(document.getElementById('{$inputId}').value);
-        // Set the value
-        {$widgetId}.setValue(initialValue);;
-    } catch (e) {
-        console.warn('Could not parse initial value for {$widgetId}, error: '+e);
-    }
-    {$widgetId}.on('change', function() {
-        document.getElementById('{$inputId}').value = JSON.stringify({$widgetId}.getValue());
-    });
-});
-JS
-, $view::POS_READY);
+        $view->registerJs($widgetJs, $view::POS_READY);
 
         parent::run();
     }
