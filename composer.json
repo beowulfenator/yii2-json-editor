@@ -19,6 +19,7 @@
     "require": {
         "yiisoft/yii2": "~2.0.0",
         "bower-asset/json-editor": "0.*",
+        "bower-asset/select2": "~4.0",
         "bower-asset/selectize": "~0.12.0"
     },
     "autoload": {

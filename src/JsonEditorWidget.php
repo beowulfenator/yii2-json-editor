@@ -66,6 +66,19 @@ class JsonEditorWidget extends BaseWidget{
     public $loadSelectize = true;
 
     /**
+     * If true, ALL widgets of this type will be configured to use the Select2 library.
+     * @var boolean
+     */
+    public $enableSelect2 = false;
+
+    /**
+     * If true, and $enableSelect2 is true, Select2 library will be registered and loaded.
+     * Set to false if Select2 is loaded elsewhere.
+     * @var boolean
+     */
+    public $loadSelect2 = true;
+
+    /**
      * If true, a hidden input will be rendered to contain the results
      * @var boolean
      */
@@ -105,6 +118,10 @@ class JsonEditorWidget extends BaseWidget{
         if ($this->enableSelectize && $this->loadSelectize) {
             SelectizeAsset::register($this->getView());
         }
+
+        if ($this->enableSelect2 && $this->loadSelect2) {
+            Select2Asset::register($this->getView());
+        }
     }
 
     public function run()
@@ -139,6 +156,10 @@ class JsonEditorWidget extends BaseWidget{
 
         if ($this->enableSelectize) {
             $view->registerJs("JSONEditor.plugins.selectize.enable = true;\n", $view::POS_READY, 'JSONEditorEnableSelectize');
+        }
+
+        if ($this->enableSelect2) {
+            $view->registerJs("JSONEditor.plugins.select2.enable = true;\n", $view::POS_READY, 'JSONEditorEnableSelect2');
         }
 
         $widgetJs = "var {$widgetId} = new JSONEditor(document.getElementById('{$containerId}'), {$clientOptions});\n";
